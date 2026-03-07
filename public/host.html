@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Host</title>
+  <link rel="stylesheet" href="/assets/host.css">
+</head>
+
+<body>
+
+<div id="setup">
+    <select id="theme-select"></select>
+    <button id="start-game">Start</button>
+</div>
+
+<div id="game" style="display: none;">
+    <span id="elapsed">0:00</span>
+    <span id="progress">-</span>
+
+    <img id="image"/>
+    <h2 id="filename">-</h2>
+
+    <div class="answer-buttons">
+        <button id="btn-no" disabled>NE</button>
+        <button id="btn-yes" disabled>TAIP</button>
+    </div>
+
+    <div class="game-buttons">
+        <button id="btn-stop">Stop</button>
+        <button id="btn-pause">Pause</button>
+    </div>
+</div>
+
+<div id="results" style="display: none;">
+    <h2>Rezultatas</h2>
+    <h1 id="correct">0</h1>
+    <h2 id="duration">0:00</h2>
+    <button id="btn-new-game">Naujas žaidimas</button>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/host.js"></script>
+</body>
+</html>
