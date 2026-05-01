@@ -207,13 +207,15 @@ io.on("connection", (socket) => {
     activeGame.index += 1;
     if (activeGame.index >= activeGame.cards.length) {
       const elapsedMs = getElapsedMs(activeGame);
-      io.to(activeGame.hostId).emit("game-over", {
+      const gameOverPayload = {
         themeId: activeGame.themeId,
         total: activeGame.cards.length,
         startTime: activeGame.startTime,
         elapsedMs,
         correctCount: activeGame.correctCount,
-      });
+      };
+
+      io.to(activeGame.hostId).emit("game-over", gameOverPayload);
 
       for (const playerId of activeGame.allowedPlayers) {
         io.to(playerId).emit("game-over");

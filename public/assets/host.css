@@ -29,6 +29,8 @@ h1 {
 
 h2 {
     margin: 1em 0;
+    align-content: center;
+    min-height: 2em;
     text-transform: uppercase;
 }
 

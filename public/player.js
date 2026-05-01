@@ -12,6 +12,7 @@ const progressEl = document.getElementById("progress");
 const imageEl = document.getElementById("image");
 
 let timerIntervalId = null;
+let thanksTimeoutId = null;
 let elapsedMsBase = 0;
 let lastSyncAt = null;
 let isPaused = false;
@@ -49,7 +50,14 @@ function startElapsedTimer() {
   }, 250);
 }
 
+function clearThanksTimeout() {
+  if (!thanksTimeoutId) return;
+  clearTimeout(thanksTimeoutId);
+  thanksTimeoutId = null;
+}
+
 function showWaiting() {
+  clearThanksTimeout();
   statusEl.style.display = "block";
   gameEl.style.display = "none";
   thanksEl.style.display = "none";
@@ -67,20 +75,27 @@ function showWaiting() {
 }
 
 function showGame() {
+  clearThanksTimeout();
   statusEl.style.display = "none";
   thanksEl.style.display = "none";
   gameEl.style.display = "block";
 }
 
 function showThanks() {
+  clearThanksTimeout();
   statusEl.style.display = "none";
   gameEl.style.display = "none";
   thanksEl.style.display = "block";
   isPaused = false;
   applyPausedState();
+
+  // Auto-return to the start screen after 10 seconds.
+  thanksTimeoutId = setTimeout(() => {
+    showWaiting();
+  }, 10_000);
 }
 
-socket.on("game-start", ({ elapsedMs }) => {
+socket.on("game-start", ({ elapsedMs, total }) => {
   showGame();
   syncElapsed(typeof elapsedMs === "number" ? elapsedMs : 0);
   isPaused = false;
@@ -115,7 +130,7 @@ socket.on("game-stopped", () => {
   showWaiting();
 });
 
-socket.on("game-over", () => {
+socket.on("game-over", (payload) => {
   showThanks();
 });
 
