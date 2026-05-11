@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="lt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mokymasis</title>
+    <link rel="stylesheet" href="assets/learn.css" />
+    <script src="learn.js" defer></script>
+  </head>
+  <body>
+    <main class="app">
+      <header class="top">
+        <img id="logo" src="/assets/logo.svg" alt="Logo" />
+        <p class="subtitle">Pasirink temą ir peržiūrėk paveikslėlius su jų pavadinimais.</p>
+      </header>
+
+      <section class="themes" aria-label="Temos">
+        <select id="themeSelect" class="theme-select" aria-label="Tema"></select>
+      </section>
+
+      <section class="content" aria-label="Galerija">
+        <h2 id="themeTitle" class="theme-title"></h2>
+        <div id="gallery" class="gallery"></div>
+      </section>
+    </main>
+  </body>
+</html>

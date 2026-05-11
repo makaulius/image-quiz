@@ -14,6 +14,41 @@ app.use(express.static("public"));
 
 const themesPath = path.join(__dirname, "public/assets/themes");
 
+const learnImageExts = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
+
+function getLearnThemesManifest() {
+  const themes = {};
+
+  for (const entry of fs.readdirSync(themesPath)) {
+    if (entry.startsWith(".")) continue;
+
+    const dirPath = path.join(themesPath, entry);
+    if (!fs.statSync(dirPath).isDirectory()) continue;
+
+    const files = fs
+      .readdirSync(dirPath)
+      .filter((file) => {
+        if (file.startsWith(".")) return false;
+        const ext = path.extname(file).toLowerCase();
+        return learnImageExts.has(ext);
+      })
+      .sort((a, b) => a.localeCompare(b, "lt", { sensitivity: "base" }));
+
+    themes[entry] = files;
+  }
+
+  return {
+    version: 1,
+    generatedAt: new Date().toISOString(),
+    themes,
+  };
+}
+
+app.get("/api/learn/themes", (req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  res.json(getLearnThemesManifest());
+});
+
 // funkcija nuskaityti temas
 function getThemes() {
   const themes = fs.readdirSync(themesPath).filter((file) => {

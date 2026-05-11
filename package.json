@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node server.js",
+    "generate:themes": "node scripts/generate-themes-manifest.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
