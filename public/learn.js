@@ -13,6 +13,14 @@ const THEME_TITLES_LT = {
 
 const collator = new Intl.Collator("lt", { sensitivity: "base" });
 
+let assetVersion = new URLSearchParams(window.location.search).get("v");
+
+function withVersionQuery(url, version) {
+  if (version == null || version === "") return url;
+  const joiner = url.includes("?") ? "&" : "?";
+  return `${url}${joiner}v=${encodeURIComponent(version)}`;
+}
+
 function getThemeTitle(themeId) {
   return THEME_TITLES_LT[themeId] ?? themeId;
 }
@@ -23,7 +31,8 @@ function fileBaseName(filename) {
 
 function themeImageUrl(themeId, filename) {
   // Keep slashes but encode spaces/diacritics.
-  return encodeURI(`assets/themes/${themeId}/${filename}`);
+  const base = encodeURI(`assets/themes/${themeId}/${filename}`);
+  return withVersionQuery(base, assetVersion);
 }
 
 function scrollToContentTopOffset(offsetPx = 100) {
@@ -35,12 +44,15 @@ function scrollToContentTopOffset(offsetPx = 100) {
 }
 
 async function loadThemeManifest() {
-  const candidates = ["./assets/themes/manifest.json", "/api/learn/themes"];
+  const candidates = ["./assets/themes/manifest.json", "api/learn/themes"];
   let lastError = null;
+
+  // Ensure the manifest request is not served from a stale cache.
+  const fetchVersion = assetVersion ?? String(Date.now());
 
   for (const url of candidates) {
     try {
-      const res = await fetch(url, { cache: "no-store" });
+      const res = await fetch(withVersionQuery(url, fetchVersion), { cache: "no-store" });
       if (!res.ok) {
         throw new Error(`${url} -> ${res.status}`);
       }
@@ -135,6 +147,14 @@ async function initLearnPage() {
 
   try {
     const manifest = await loadThemeManifest();
+
+    if (!assetVersion) {
+      assetVersion =
+        typeof manifest?.generatedAt === "string" && manifest.generatedAt.length > 0
+          ? manifest.generatedAt
+          : String(Date.now());
+    }
+
     const themes = manifest.themes;
 
     const themeIds = Object.keys(themes).sort((a, b) =>
